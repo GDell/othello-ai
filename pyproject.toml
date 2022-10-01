@@ -1,0 +1,23 @@
+[project]
+name = ""
+version = ""
+description = ""
+authors = [
+    {name = "GabeDell", email = "gabe@growmyharvest.com"},
+]
+dependencies = [
+    "PythonTurtle",
+    "tk-tools>=0.16.0",
+    "keras>=2.10.0",
+]
+requires-python = ">=3.10"
+license = {text = "MIT"}
+
+[tool.pdm]
+
+[build-system]
+requires = ["pdm-pep517>=1.0.0"]
+build-backend = "pdm.pep517.api"
+
+[tool.pdm.scripts]
+start = "python ./othello-game-master/game.py"
