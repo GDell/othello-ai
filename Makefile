@@ -1,8 +1,5 @@
 build: 
-	pdm update
-	pdm build
+	pip install -r requirements.py
 
 run:
-	eval $(pdm venv activate othello-ai)
-	pdm run start
-	
+	python app.py

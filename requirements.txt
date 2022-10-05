@@ -1,4 +1,5 @@
 PythonTurtle
-tk-tools
-python3.10-tk
 keras
+tensorflow
+matplotlib
+numpy

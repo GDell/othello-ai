@@ -5,8 +5,10 @@
     November 28, 2018
 '''
 
-import score, turtle, random
-from board import Board
+from othello_game_master import score
+import random
+import turtle
+from othello_game_master.board import Board
 
 # Define all the possible directions in which a player's move can flip 
 # their adversary's tiles as constant (0 – the current row/column, 
