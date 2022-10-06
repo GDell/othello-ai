@@ -18,19 +18,33 @@ def sqrt_int(x):
 # Each board and move choice is stored and labeled as having won or lost at the end of the game. 
 # Boards and move choices from 80 games are used to train, the rest is used to test accuracy.
 
-
+import json
 def load_train_data():
     num_test_trials = len(next(os.walk('data'))[1])
     board_data = []
     move_data = []
-    game_result = False # Did the AI win?
     for i in range(num_test_trials):
         board_files = [name for name in os.listdir(f'./data/trial_{i+1}/') if "board" in name]
         move_files = [name for name in os.listdir(f'./data/trial_{i+1}/') if "selected_move" in name]
-        game_result = [name for name in os.listdir(f'./data/trial_{i+1}/') if "game_result" in name][0]
-        print("here are the board files ")
-        print(board_files)
-        # board_data = open("./data/trial/")
+
+        for board_file in board_files:
+            with open(f'./data/trial_{i+1}/{board_file}') as f:
+                # Load and add the board. 
+                board_data += [[json.loads(line) for line in f.readlines() if "[" in line]]
+
+        for move_file in move_files:     
+            with open(f'./data/trial_{i+1}/{move_file}') as f: 
+                move_data += [[json.loads(line) for line in f.readlines()]]
+
+
+
+        print("Here is the training board data ")
+        for line in board_data:
+            print(line)
+
+        print("Here is the training move data ")
+        for move in move_data:
+            print(move)
 
 
 load_train_data()
