@@ -9,6 +9,7 @@ from othello_game_master import score
 import random
 import turtle
 from othello_game_master.board import Board
+import time
 
 # Define all the possible directions in which a player's move can flip 
 # their adversary's tiles as constant (0 – the current row/column, 
@@ -44,6 +45,7 @@ class Othello(Board):
         Board.__init__(self, n)
         self.current_player = 0
         self.num_tiles = [2, 2]
+        self.current_move_index = 0
 
     def initialize_board(self):
         ''' Method: initialize_board
@@ -195,6 +197,7 @@ class Othello(Board):
         return False
 
     def run(self):
+        
         ''' Method: run
             Parameters: self
             Returns: nothing
@@ -207,11 +210,19 @@ class Othello(Board):
             return
         
         self.current_player = 0
-        print('Your turn.')
-        turtle.onscreenclick(self.play)
+        print('AI\s turn.')
+        self.play()
+        # turtle.onscreenclick(self.play)
         turtle.mainloop()
+        
 
-    def play(self, x, y):
+    def write_trial_file(self, file_name, data):
+        f = open(f"./data/{file_name}_{self.current_move_index}.txt", "w")
+        f.write(data)
+        f.close()
+
+
+    def play(self):  #x, y
         ''' Method: play
             Parameters: self, x (float), y (float)
             Returns: nothing
@@ -229,14 +240,40 @@ class Othello(Board):
                   About the input: (x, y) are the coordinates of where 
                   the user clicks.
         '''
-        # Play the user's turn
-        if self.has_legal_move():
-            self.get_coord(x, y)
+
+        # Take a snapshot of the game
+        snapshot = self.__str__()
+        moves = self.get_legal_moves()
+        chosen_move = ""
+        if moves:
+            self.move = random.choice(moves)
+            chosen_move = self.move
+            print("THIS IS THE SNAPSHOT")
+            print(snapshot)
+            print("THIS IS THE CHOSEN MOVE")
+            print(chosen_move)
+
+            self.write_trial_file("board", snapshot)
+            self.write_trial_file("move", str(chosen_move))
+            self.current_move_index += 1
+
+
             if self.is_legal_move(self.move):
                 turtle.onscreenclick(None)
                 self.make_move()
             else:
                 return
+
+        # Play the user's turn
+        # if self.has_legal_move():
+            # self.get_coord(x, y)
+            # self.make_random_move()
+            
+            # if self.is_legal_move(self.move):
+            #     turtle.onscreenclick(None)
+            #     self.make_move()
+            # else:
+            #     return
 
         # Play the computer's turn
         while True:
@@ -269,8 +306,10 @@ class Othello(Board):
                 print('Quit in 3s...')
                 turtle.ontimer(turtle.bye, 3000)
         else:
-            print('Your turn.')
-            turtle.onscreenclick(self.play)
+            print('AI\'s turn.')
+            # time.sleep(1)
+            self.play()
+            # turtle.onscreenclick(self.play)
         
     def make_random_move(self):
         ''' Method: make_random_move
@@ -290,18 +329,23 @@ class Othello(Board):
             Does: Announces the winner and reports the final number of
                   tiles each play has.
         '''
+        win = False
         print('GAME OVER!!')
         if self.num_tiles[0] > self.num_tiles[1]:
             print('YOU WIN!!',
                   'You have %d tiles, but the computer only has %d!' 
                   % (self.num_tiles[0], self.num_tiles[1]))
+            win = True
         elif self.num_tiles[0] < self.num_tiles[1]:
             print('YOU LOSE...',
                   'The computer has %d tiles, but you only have %d :(' 
                   % (self.num_tiles[1], self.num_tiles[0]))
         else:
             print("IT'S A TIE!! There are %d of each!" % self.num_tiles[0])
-    
+
+        self.write_trial_file("game_result", str(win))
+
+
     def __str__(self):
         ''' 
             Returns a printable version of the current status of the 

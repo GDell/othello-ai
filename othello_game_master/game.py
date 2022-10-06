@@ -19,5 +19,5 @@ def run_game():
     # The computer makes a random legal move every time
     # Game is over when there are no more lagal moves or the board is full
     
-    # game.run()
+    game.run()
 

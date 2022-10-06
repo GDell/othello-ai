@@ -1,58 +1,52 @@
-import tensorflow as tf
+
+from tensorflow.keras.layers import Dense, Input # Dropout, Flatten, Input
+from tensorflow.keras.layers import Conv2D, Concatenate # MaxPooling2D
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras import activations
+
 import numpy as np
+import os
 
-BOARD_SIZE = 64
+batch_size = 64
+epochs = 20
+num_output_nodes = 64
+print("THIS IS THE BOARD SIZE")
+print(num_output_nodes)
 
-def weight_variable(shape):
-  initial = tf.truncated_normal(shape, stddev=0.1)
-  return tf.Variable(initial)
- 
-def bias_variable(shape):
-  initial = tf.constant(0.1, shape=shape)
-  return tf.Variable(initial)
- 
-def conv2d(x, W):
-  return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
+potential_moves = [[1,1],[2,2]]
+board = [8*8]
 
-def place_holders():
-	x = tf.placeholder("float", shape=[None, BOARD_SIZE, BOARD_SIZE , 8])
-	ownership = tf.placeholder("float", shape=[None, BOARD_SIZE**2])
-	return x, ownership
-    
-def model(x):
 
-	x_board = tf.reshape(x, [-1, BOARD_SIZE, BOARD_SIZE, 8])
-	W_conv1 = weight_variable([5, 5, 8, 64])
-	b_conv1 = bias_variable([64])
-	h_conv1 = tf.nn.relu(conv2d(x_board, W_conv1) + b_conv1)
-	 
-	W_conv2 = weight_variable([5, 5, 64, 64])
-	b_conv2 = bias_variable([64])
-	h_conv2 = tf.nn.relu(conv2d(h_conv1, W_conv2) + b_conv2)
-	 
-	W_conv3 = weight_variable([5, 5, 64, 64])
-	b_conv3 = bias_variable([64])
-	h_conv3 = tf.nn.relu(conv2d(h_conv2, W_conv3) + b_conv3)
-	 
-	W_conv4 = weight_variable([5, 5, 64, 48])
-	b_conv4 = bias_variable([48])
-	h_conv4 = tf.nn.relu(conv2d(h_conv3, W_conv4) + b_conv4)
-	 
-	W_conv5 = weight_variable([5, 5, 48, 48])
-	b_conv5 = bias_variable([48])
-	h_conv5 = tf.nn.relu(conv2d(h_conv4, W_conv5) + b_conv5)
-	 
-	# Final outputs from layer 5
-	W_convm5 = weight_variable([5, 5, 48, 1])
-	b_convm5 = bias_variable([1])
-	h_convm5 = conv2d(h_conv5, W_convm5) + b_convm5
-	 
-	pred_ownership = tf.sigmoid(tf.reshape(h_convm5, [-1, BOARD_SIZE**2]))
-	return pred_ownership
+# The board
+input1_board = Input(shape=(8,8,3))
+# The possible moves
+input2_move_choices = Input(shape=(8,8,1))
 
-def loss_function(y_pred, y_true):
-	loss = tf.reduce_mean(tf.pow(y_pred - y_true, 2))
-	return loss
+# Concatenate these inputs
+input = Concatenate()([input1_board, input2_move_choices])
+input_layer = Conv2D(32, kernel_size=(3,3),activation='linear',input_shape=(8,8,3),padding='same')(input)
+middle_layer = Dense(num_output_nodes*2)(input_layer)
+middle_layer_1 = Dense(num_output_nodes*4)(middle_layer)
 
-def train_step(loss):
-	return tf.train.AdamOptimizer(1e-4).minimize(loss)
+# Output the board (8x8)
+output_layer = Dense(num_output_nodes)(middle_layer_1) # activation=activations.sigmoid
+model = Model(inputs=[input1_board, input2_move_choices], outputs=output_layer)
+
+
+model.summary()
+
+
+# model = Sequential()
+# model.add(Conv2D(32, kernel_size=(3, 3),activation='linear',input_shape=(8,8,2),padding='same'))
+# model.add(LeakyReLU(alpha=0.1))
+# model.add(MaxPooling2D((2, 2),padding='same'))
+# model.add(Conv2D(64, (3, 3), activation='linear',padding='same'))
+# model.add(LeakyReLU(alpha=0.1))
+# model.add(MaxPooling2D(pool_size=(2, 2),padding='same'))
+# model.add(Conv2D(128, (3, 3), activation='linear',padding='same'))
+# model.add(LeakyReLU(alpha=0.1))                  
+# model.add(MaxPooling2D(pool_size=(2, 2),padding='same'))
+# model.add(Flatten())
+# model.add(Dense(128, activation='linear'))
+# model.add(LeakyReLU(alpha=0.1))                  
+# model.add(Dense(num_output_nodes, activation='softmax'))
