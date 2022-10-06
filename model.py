@@ -1,4 +1,3 @@
-
 from tensorflow.keras.layers import Dense, Input # Dropout, Flatten, Input
 from tensorflow.keras.layers import Conv2D, Concatenate # MaxPooling2D
 from tensorflow.keras.models import Sequential, Model
@@ -23,7 +22,8 @@ input1_board = Input(shape=(8,8,3))
 input2_move_choices = Input(shape=(8,8,1))
 
 # Concatenate these inputs
-input = Concatenate()([input1_board, input2_move_choices])
+input = input1_board
+# input = Concatenate()([input1_board, input2_move_choices])
 input_layer = Conv2D(32, kernel_size=(3,3),activation='linear',input_shape=(8,8,3),padding='same')(input)
 middle_layer = Dense(num_output_nodes*2)(input_layer)
 middle_layer_1 = Dense(num_output_nodes*4)(middle_layer)
