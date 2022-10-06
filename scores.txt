@@ -6,3 +6,8 @@ exit 32
 exit 26
 TTexit 25
 exit 26
+exit 28
+exit 38
+exit 35
+exit 27
+exit 28

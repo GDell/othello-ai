@@ -25,8 +25,8 @@ def sqrt_int(x):
 ### Data pre-preprocessing
 
 # Convert training data to matrix
-train_X = train_X.reshape(-1, sqrt_int(BOARD_SIZE), sqrt_int(BOARD_SIZE), 2)
-test_X = test_X.reshape(-1, sqrt_int(BOARD_SIZE), sqrt_int(BOARD_SIZE), 2)
+train_X = train_X.reshape(-1, sqrt_int(BOARD_SIZE), sqrt_int(BOARD_SIZE), 3)
+test_X = test_X.reshape(-1, sqrt_int(BOARD_SIZE), sqrt_int(BOARD_SIZE), 3)
 
 
 # Data needs to be fed to the network as type float32

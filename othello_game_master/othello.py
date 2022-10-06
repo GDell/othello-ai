@@ -9,7 +9,7 @@ from othello_game_master import score
 import random
 import turtle
 from othello_game_master.board import Board
-import time
+import time, json
 
 # Define all the possible directions in which a player's move can flip 
 # their adversary's tiles as constant (0 – the current row/column, 
@@ -222,6 +222,16 @@ class Othello(Board):
         f.close()
 
 
+    def convert_move_to_matrix(self, move): 
+        rows, cols = (8,8)
+        m = [[0 for i in range(cols)] for j in range(rows)]
+        m[move[0]][move[1]] = 1 
+        board_str = ''
+        for row in m:
+            board_str += str(row) + '\n'
+        return board_str 
+
+
     def play(self):  #x, y
         ''' Method: play
             Parameters: self, x (float), y (float)
@@ -254,7 +264,8 @@ class Othello(Board):
             print(chosen_move)
 
             self.write_trial_file("board", snapshot)
-            self.write_trial_file("move", str(chosen_move))
+            self.write_trial_file("selected_move", self.convert_move_to_matrix(chosen_move))
+            self.write_trial_file("move_choices", str(moves))
             self.current_move_index += 1
 
 
