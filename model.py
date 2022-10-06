@@ -9,17 +9,12 @@ import os
 batch_size = 64
 epochs = 20
 num_output_nodes = 64
-print("THIS IS THE BOARD SIZE")
-print(num_output_nodes)
-
-potential_moves = [[1,1],[2,2]]
-board = [8*8]
 
 
 # The board
 input1_board = Input(shape=(8,8,3))
 # The possible moves
-input2_move_choices = Input(shape=(8,8,1))
+# input2_move_choices = Input(shape=(8,8,1))
 
 # Concatenate these inputs
 input = input1_board
@@ -30,7 +25,7 @@ middle_layer_1 = Dense(num_output_nodes*4)(middle_layer)
 
 # Output the board (8x8)
 output_layer = Dense(num_output_nodes)(middle_layer_1) # activation=activations.sigmoid
-model = Model(inputs=[input1_board, input2_move_choices], outputs=output_layer)
+model = Model(inputs=input1_board, outputs=output_layer) # [input1_board, input2_move_choices]
 
 
 model.summary()

@@ -222,6 +222,13 @@ class Othello(Board):
         f.close()
 
 
+    def reset_board(self):
+        self.initialize_board()
+        self.current_player = 0
+        self.num_tiles = [2, 2]
+        self.current_move_index = 0
+        return
+
     def convert_move_to_matrix(self, move): 
         rows, cols = (8,8)
         m = [[0 for i in range(cols)] for j in range(rows)]
@@ -305,7 +312,11 @@ class Othello(Board):
         if not self.has_legal_move() or sum(self.num_tiles) == self.n ** 2:
             turtle.onscreenclick(None)
             print('-----------')
-            self.report_result()
+            is_win = self.report_result()
+            # if not is_win:
+            #     self.reset_board()
+            #     self.run()
+            #     return
             name = input('Enter your name for posterity\n')
             if not score.update_scores(name, self.num_tiles[0]):
                 print('Your score has not been saved.')
@@ -355,6 +366,8 @@ class Othello(Board):
             print("IT'S A TIE!! There are %d of each!" % self.num_tiles[0])
 
         self.write_trial_file("game_result", str(win))
+
+        return win 
 
 
     def __str__(self):

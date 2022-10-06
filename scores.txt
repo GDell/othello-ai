@@ -11,3 +11,15 @@ exit 38
 exit 35
 exit 27
 exit 28
+exit 13
+exit 38
+exit 20
+exit 31
+exit 30
+exit 34
+exitY 17
+exit  29
+exit 26
+exit 20
+exit! 21
+exit! 36

@@ -49,6 +49,14 @@ The process of training against itself will go like this:
 2. Take this data and re-train the model. 
 
 
+Do we just avoid data from games where we lost? Only train on decision made in games where we won? Then train against itself. 
+
+OR do we incorporate the win/loss into the loss function? 
+
+
+
+
+
 ## Dependencies 
 
 This model the following Othello game engine: 
