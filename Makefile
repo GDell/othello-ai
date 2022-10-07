@@ -12,3 +12,7 @@ othello:
 
 train: 
 	python train_model.py
+
+
+model: 
+	python model.py
