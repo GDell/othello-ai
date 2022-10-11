@@ -6,6 +6,8 @@ import math
 import os
 import json
 from model import fetch_model
+import tensorflow as tf
+from tensorflow.keras.losses import SparseCategoricalCrossentropy
 
 from sklearn.model_selection import train_test_split
 
@@ -50,22 +52,18 @@ def load_train_data():
     # train_y = np.array(move_data[0:int(len(move_data)*0.8)])
     # test_y = np.array(move_data[int(len(move_data)*0.8):])
     
-    train_x, test_x, train_y, test_y = train_test_split(board_data, move_data, test_size=0.25, random_state=42)
+    train_x, test_x, train_y, test_y = train_test_split(board_data, move_data, test_size=0.25) #  random_state=42
 
     return (np.array(train_x), np.array(train_y)), (np.array(test_x), np.array(test_y))
 
 
+
 (train_X, train_Y), (test_X, test_Y) = load_train_data()
-
-
-print("HERE ARE THE TRAINING VALUES")
-print(train_X)
-print(train_Y)
-print(len(train_X))
-print(len(train_Y))
-
-#Normalize data between values 0 and 1 
-
+# print("HERE ARE THE TRAINING VALUES")
+# print(train_X)
+# print(train_Y)
+# print(len(train_X))
+# print(len(train_Y))
 
 
 train_X = train_X.reshape(-1, 8, 8, 1)
@@ -74,42 +72,75 @@ test_X = test_X.reshape(-1, 8, 8, 1)
 train_X = train_X.astype('float32')
 test_X = test_X.astype('float32')
 
+# Normalize to a value between 0.0 and 1.0
 train_X, test_X = train_X / 3., test_X / 3.
 
 
 # print(train_X)
+# train_Y = train_Y.reshape(-1, 8, 8, 1)
+# test_Y = test_Y.reshape(-1, 8, 8, 1)
 
-train_Y = train_Y.reshape(-1, 8, 8, 1)
-test_Y = test_Y.reshape(-1, 8, 8, 1)
+train_Y = train_Y.astype('float32')
+test_Y = test_Y.astype('float32')
+train_Y = train_Y.reshape(-1, 64)
+test_Y = test_Y.reshape(-1, 64)
 
-train_Y = train_X.astype('float32')
-test_Y = test_X.astype('float32')
 
-print("HERE IS THE SHAPE")
-print(test_Y.shape)
+# print(len(train_Y))
+
+# print(len(test_Y))
+# print(len(train_Y))
+print("HERE IS TRAIN Y")
+# print(train_Y)
+print(train_X.shape)
+print(train_Y.shape)
+# print(train_Y[0])
+# print(len(train_Y))
+
+
+# print("HERE IS THE SHAPE")
+# print(test_Y.shape)
+# print(test_Y[0])
+# print("Length")
+# print(len(train_Y))
+# print(len(train_X))
 
 # print(train_X.shape,train_Y.shape)
 
 model = fetch_model()
 
-def my_loss_fn(y_true, y_pred):
-        print("Y true")
-        print(y_true[0])
-        print("Y pred")
-        print(y_pred[0])
-        squared_difference = y_true - y_pred
-        
-        return tf.reduce_mean(squared_difference, axis=-1)  # Note the `axis=-1`
+# def my_loss_fn(y_true, y_pred):
+#     print("Y true")
+#     print(y_true)
+#     print("Y pred")
+#     print(y_pred)
+#     squared_difference = y_true - y_pred
+    
+#     return tf.reduce_mean(squared_difference, axis=-1)  # Note the `axis=-1`
 
-model.compile(optimizer='adam',
-            loss=my_loss_fn,
-            metrics=['accuracy'])
-history = model.fit(train_X, train_Y, batch_size=2,epochs=20, verbose=1,validation_data=(test_X, test_Y))
+def loss_function(y_true, y_pred):
+    # print("This is y_true")
+    # # print(y_true)
+    # print(tf.print(y_true))
+    
+    print(f"This is y_pred")
+    # print(y_pred)
+    print(tf.print(y_pred))
 
-# history = model.fit(train_X, train_Y, epochs=10, 
-#                     validation_data=(test_X, test_Y))
+    loss = tf.reduce_mean(tf.pow(y_pred - y_true, 2)) # axis=1
+    return loss
 
 
+model.compile(
+    optimizer='adam',
+    loss=loss_function, #SparseCategoricalCrossentropy(from_logits=True),
+    metrics=['accuracy']
+)
+
+print(len(train_X))
+print(len(train_Y))
+history = model.fit(train_X, train_Y, batch_size=32, epochs=100, verbose=1, validation_data=(test_X, test_Y))
+ 
 # (train_X, train_Y), (test_X, test_Y) = fashion_mnist.load_data()
 
 # print(train_X)
