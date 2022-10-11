@@ -217,7 +217,7 @@ class Othello(Board):
         
 
     def write_trial_file(self, file_name, data):
-        f = open(f"./data/{file_name}_{self.current_move_index}.txt", "w")
+        f = open(f"./data/epoch_1/{file_name}_{self.current_move_index}.txt", "w")
         f.write(data)
         f.close()
 

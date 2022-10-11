@@ -25,8 +25,7 @@ def fetch_model():
     go_model.add(Conv2D(128, (3, 3), activation='linear',padding='same'))
     go_model.add(LeakyReLU(alpha=0.1))                  
     go_model.add(MaxPooling2D(pool_size=(2, 2),padding='same'))
-    go_model.add(Flatten())
-    # go_model.add(Dense(128, activation='linear'))                 
+    go_model.add(Flatten())              
     go_model.add(Dense(64, activation=sigmoid))
     return go_model
 
