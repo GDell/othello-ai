@@ -6,10 +6,9 @@ from tensorflow.keras import losses
 from tensorflow.keras.activations import sigmoid
 import tensorflow as tf
 # Reference https://www.tensorflow.org/tutorials/images/cnn
+# ttps://www.tensorflow.org/api_docs/python/tf/keras/activations/sigmoid
 
 
-batch_size = 64
-epochs = 20
 num_output_nodes = 64
 
 
@@ -26,10 +25,11 @@ def fetch_model():
     go_model.add(LeakyReLU(alpha=0.1))                  
     go_model.add(MaxPooling2D(pool_size=(2, 2),padding='same'))
     go_model.add(Flatten())              
-    go_model.add(Dense(64, activation=sigmoid))
+    go_model.add(Dense(num_output_nodes, activation=sigmoid))
+    go_model.summary()
     return go_model
 
 
 if __name__ == '__main__': 
-    compile_model()
+    fetch_model()
 
