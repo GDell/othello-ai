@@ -1,3 +1,5 @@
+from array import array
+from re import A
 from sklearn.model_selection import train_test_split
 import numpy as np
 import json
@@ -39,7 +41,6 @@ def prep_training_data():
 
     train_X = train_X.reshape(-1, 8, 8)
     test_X = test_X.reshape(-1, 8, 8)
-
     train_X = train_X.astype('float32')
     test_X = test_X.astype('float32')
 
@@ -56,3 +57,9 @@ def prep_training_data():
 
     return (train_X, train_Y), (test_X, test_Y)
 
+
+def prep_board_for_network(board: array) -> np.array:
+    board = board.reshape(-1, 8, 8)
+    board = board.astype('float32')
+    board = board / 3 
+    return board
