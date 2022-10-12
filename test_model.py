@@ -2,10 +2,11 @@ from array import array
 from utils import prep_training_data
 from utils import prep_board_for_network
 from tensorflow.keras.models import model_from_json
+from tensorflow.keras.models import Model
 import numpy as np
 
 
-def load_model():
+def load_model() -> Model:
     model = model_from_json(open('./models/test_model/model.json').read())
     model.load_weights('./models/test_model/model.h5')
     return model
@@ -16,14 +17,19 @@ def predict_move(board: array) -> tuple:
 
 
 def process_prediction(prediction):
+    possible_moves = []
     prediction = prediction.reshape(-1,8,8)
-    for var in range(0,len(prediction[0])):
-        row = np.ndarray.tolist(prediction[0][var])
-        count = 0 
-        for item in row:
-            prediction[0][var][count] = round(item, 2)
-            count += 1
-    return prediction
+    for row in range(0,len(prediction[0])):
+        row_data = np.ndarray.tolist(prediction[0][row])
+        for column in range(0, len(row_data)):
+            rounded_prediction = round(row_data[column], 2)
+            prediction[0][row][column] = rounded_prediction
+            if rounded_prediction > 0.0:
+                possible_moves.append({
+                    'move': (row, column), 
+                    'value': rounded_prediction
+                })
+    return prediction, sorted(possible_moves, reverse=True,  key=lambda d: d['value'])
 
 
 def test_model():
@@ -34,9 +40,10 @@ def test_model():
     prediction = model.predict(model_test_input)
     print("\n INPUT")
     print(model_test_input * 3)
-    twod_pred = process_prediction(prediction)
+    twod_pred, possible_moves = process_prediction(prediction)
     print("\n PREDICTION")
     print(twod_pred)
+    print(possible_moves)
 
 
 
