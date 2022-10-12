@@ -12,18 +12,18 @@ def load_model(model_name: str = "test_model") -> Model:
     return model
 
 
-def predict_move(board: array, model: Model) -> tuple:
+def predict_move(board: array, model: Model, possible_moves: array):
     board = prep_board_for_network(board)
     print("\n INPUT")
     print(board * 3)
     prediction = model.predict(board)
-    prediction, possible_moves = process_prediction(prediction)
+    prediction, predicted_moves = process_prediction(prediction)
     print("\n PREDICTION")
-    print(twod_pred)
-    print(possible_moves)
+    print(prediction)
+    print(predicted_moves)
 
 
-def process_prediction(prediction):
+def process_prediction(prediction: np.ndarray) -> tuple[np.ndarray, array]:
     possible_moves = []
     prediction = prediction.reshape(-1,8,8)
     for row in range(0,len(prediction[0])):
@@ -36,11 +36,15 @@ def process_prediction(prediction):
                     'move': (row, column), 
                     'value': rounded_prediction
                 })
+    print("this is the prediction type: ")
+    print(type(prediction))
     return prediction, sorted(possible_moves, reverse=True,  key=lambda d: d['value'])
 
 
 def test_model():
-    # Load the model
+    ''' 
+        Takes no input and obtains a move prediction from the most recent model using a random board in the training data set. 
+    '''
     model = load_model()
     (train_X, train_Y), (test_X, test_Y) = prep_training_data()
     model_test_input = train_X[0].reshape(-1,8,8)

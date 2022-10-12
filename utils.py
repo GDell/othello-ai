@@ -7,7 +7,9 @@ import os
 
 
 # Load training and testing data.
-def load_train_data(epoch):
+def load_train_data(epoch: str) -> \
+    tuple[tuple[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]]:
+    
     num_test_trials = len(next(os.walk(f'data/{epoch}'))[1])
     
     board_data = []
@@ -33,7 +35,9 @@ def load_train_data(epoch):
     return (np.array(train_x), np.array(train_y)), (np.array(test_x), np.array(test_y))
 
 
-def prep_training_data(epoch="starting_training_set"):
+def prep_training_data(epoch: str ="starting_training_set") -> \
+    tuple[tuple[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]]:
+    
     (train_X, train_Y), (test_X, test_Y) = load_train_data(epoch)
 
     print("HERE IS THE INPUT")
