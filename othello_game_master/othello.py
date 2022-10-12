@@ -9,7 +9,7 @@ from othello_game_master import score
 import random
 import turtle
 from othello_game_master.board import Board
-import time, json
+import time
 
 # Define all the possible directions in which a player's move can flip 
 # their adversary's tiles as constant (0 – the current row/column, 
@@ -37,7 +37,7 @@ class Othello(Board):
                  inherited from class Board
     '''
 
-    def __init__(self, n = 8):
+    def __init__(self, n = 8, train_mode = False):
         '''
             Initilizes the attributes. 
             Only takes one optional parameter; others have default values.
@@ -46,6 +46,8 @@ class Othello(Board):
         self.current_player = 0
         self.num_tiles = [2, 2]
         self.current_move_index = 0
+        self.train_mode = train_mode
+        self.epoch = 0
 
     def initialize_board(self):
         ''' Method: initialize_board
@@ -217,7 +219,7 @@ class Othello(Board):
         
 
     def write_trial_file(self, file_name, data):
-        f = open(f"./data/epoch_1/{file_name}_{self.current_move_index}.txt", "w")
+        f = open(f"./data/{self.epoch}/{file_name}_{self.current_move_index}.txt", "w")
         f.write(data)
         f.close()
 

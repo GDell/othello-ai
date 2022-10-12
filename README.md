@@ -1,3 +1,7 @@
+## Requirements
+
+conda -- https://conda.io/projects/conda/en/latest/user-guide/getting-started.html
+
 ## Start:
 
 'conda activate othello-ai'
@@ -11,32 +15,31 @@ Install packages
 ## Input: 
 
 1. 8x8 matrix - Current board state (64 total vectors)
-2. Possible moves
+2. Possible moves? 
+3. Other features? ....
 
 Values - 0, 1, 2 
 
 
 ## Output:
 
-8x8 matrix 
+Array of 64 float values, converted to 8x8 matrix.
 
-A selection of all possible choices for the next move, the liklihood they lead to victory
+A selection of all possible choices for the next move, the liklihood they lead to victory.
 
 
 ## Labels: 
 
-0 or 1 
-Loss at the end of the game, retained at the end of the game?
-Win at the end of the game, retained at the end of the game?
+The move given the board input that led to a victory at the end of the game. (Trained only on games won)
 
 
 ## Training: 
 
 8x8 Input nodes
 
-8x8 Output nodes
+64 Output nodes
 
-The model would train against itself. 
+The model would produce training data sets by playing against itself. 
 
 Initially, the model will have entirely randomized weights. 
 
@@ -54,10 +57,10 @@ Do we just avoid data from games where we lost? Only train on decision made in g
 OR do we incorporate the win/loss into the loss function? 
 
 
-
-
-
 ## Dependencies 
 
-This model the following Othello game engine: 
-othello-game <https://github.com/SiyanH/othello-game>
+Credit to https://github.com/SiyanH for the Othello Game engine following Othello game engine used in this project.
+    - othello-game <https://github.com/SiyanH/othello-game>
+
+
+
