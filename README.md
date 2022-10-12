@@ -59,7 +59,7 @@ OR do we incorporate the win/loss into the loss function?
 
 ## Dependencies 
 
-Credit to https://github.com/SiyanH for the Othello Game engine following Othello game engine used in this project.
+Credit to https://github.com/SiyanH for the Othello Game engine used in this project.
     - othello-game <https://github.com/SiyanH/othello-game>
 
 
