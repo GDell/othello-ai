@@ -2,8 +2,8 @@ build:
 	pip install -r requirements.py
 
 
-othello:
-	python app.py
+game:
+	python game.py
 
 
 model: 
