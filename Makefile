@@ -14,7 +14,7 @@ train:
 	python train_model.py
 
 
-test: 
-	python test_model.py
+run_model: 
+	python run_model.py
 
 

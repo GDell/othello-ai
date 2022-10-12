@@ -6,14 +6,21 @@ from tensorflow.keras.models import Model
 import numpy as np
 
 
-def load_model() -> Model:
-    model = model_from_json(open('./models/test_model/model.json').read())
-    model.load_weights('./models/test_model/model.h5')
+def load_model(model_name: str = "test_model") -> Model:
+    model = model_from_json(open(f'./models/{model_name}/model.json').read())
+    model.load_weights(f'./models/{model_name}/model.h5')
     return model
 
 
-def predict_move(board: array) -> tuple:
+def predict_move(board: array, model: Model) -> tuple:
     board = prep_board_for_network(board)
+    print("\n INPUT")
+    print(board * 3)
+    prediction = model.predict(board)
+    prediction, possible_moves = process_prediction(prediction)
+    print("\n PREDICTION")
+    print(twod_pred)
+    print(possible_moves)
 
 
 def process_prediction(prediction):
