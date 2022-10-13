@@ -12,7 +12,7 @@ def load_model(model_name: str = "test_model") -> Model:
     return model
 
 
-def predict_move(board: array, model: Model, possible_moves: array):
+def predict_move(board: array, model: Model) -> tuple[np.ndarray, array]:
     board = prep_board_for_network(board)
     print("\n INPUT")
     print(board * 3)
@@ -21,6 +21,7 @@ def predict_move(board: array, model: Model, possible_moves: array):
     print("\n PREDICTION")
     print(prediction)
     print(predicted_moves)
+    return prediction, predicted_moves
 
 
 def process_prediction(prediction: np.ndarray) -> tuple[np.ndarray, array]:

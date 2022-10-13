@@ -5,8 +5,6 @@ from tensorflow.keras import activations
 from tensorflow.keras import losses
 from tensorflow.keras.activations import sigmoid
 import tensorflow as tf
-# Reference https://www.tensorflow.org/tutorials/images/cnn
-# ttps://www.tensorflow.org/api_docs/python/tf/keras/activations/sigmoid
 
 
 num_output_nodes = 64

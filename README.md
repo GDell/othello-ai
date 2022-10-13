@@ -1,6 +1,6 @@
 ## Requirements
 
-conda -- https://conda.io/projects/conda/en/latest/user-guide/getting-started.html
+conda -- <https://conda.io/projects/conda/en/latest/user-guide/getting-started.html>
 
 ## Start:
 
@@ -63,4 +63,8 @@ Credit to https://github.com/SiyanH for the Othello Game engine used in this pro
     - othello-game <https://github.com/SiyanH/othello-game>
 
 
+## Resources
+
+- <https://www.tensorflow.org/tutorials/images/cnn>
+- <https://www.tensorflow.org/api_docs/python/tf/keras/activations/sigmoid>
 

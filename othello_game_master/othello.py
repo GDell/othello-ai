@@ -6,9 +6,11 @@
 '''
 
 from othello_game_master import score
+from othello_game_master.board import Board
+from othello_game_master.modes import GameModes
+from run_model import predict_move
 import random
 import turtle
-from othello_game_master.board import Board
 import time
 
 # Define all the possible directions in which a player's move can flip 
@@ -37,7 +39,7 @@ class Othello(Board):
                  inherited from class Board
     '''
 
-    def __init__(self, n = 8, train_mode = False):
+    def __init__(self, n = 8, train_mode = 'random_vs_random'):
         '''
             Initilizes the attributes. 
             Only takes one optional parameter; others have default values.
@@ -46,7 +48,7 @@ class Othello(Board):
         self.current_player = 0
         self.num_tiles = [2, 2]
         self.current_move_index = 0
-        self.train_mode = train_mode
+        self.train_mode = GameModes(train_mode)
         self.epoch = 0
 
     def initialize_board(self):
@@ -219,7 +221,7 @@ class Othello(Board):
         
 
     def write_trial_file(self, file_name, data):
-        f = open(f"./data/{self.epoch}/{file_name}_{self.current_move_index}.txt", "w")
+        f = open(f"./data/epoch_{self.epoch}/{file_name}_{self.current_move_index}.txt", "w")
         f.write(data)
         f.close()
 
@@ -265,6 +267,8 @@ class Othello(Board):
         moves = self.get_legal_moves()
         chosen_move = ""
         if moves:
+
+            # Make a random move choice
             self.move = random.choice(moves)
             chosen_move = self.move
             print("THIS IS THE SNAPSHOT")
@@ -272,6 +276,7 @@ class Othello(Board):
             print("THIS IS THE CHOSEN MOVE")
             print(chosen_move)
 
+            # Write to file for training data. 
             self.write_trial_file("board", snapshot)
             self.write_trial_file("selected_move", self.convert_move_to_matrix(chosen_move))
             self.write_trial_file("move_choices", str(moves))
