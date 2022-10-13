@@ -1,6 +1,8 @@
 from array import array
 from re import A
 from sklearn.model_selection import train_test_split
+from tensorflow.keras.models import Model
+from tensorflow.keras.models import model_from_json
 import numpy as np
 import json
 import os
@@ -67,3 +69,11 @@ def prep_board_for_network(board: array) -> np.array:
     board = board.astype('float32')
     board = board / 3 
     return board
+
+
+def load_model(model_name: str = "test_model") -> Model:
+    model = model_from_json(open(f'./models/{model_name}/model.json').read())
+    model.load_weights(f'./models/{model_name}/model.h5')
+    return model
+
+

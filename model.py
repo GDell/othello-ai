@@ -11,7 +11,7 @@ num_output_nodes = 64
 
 
 
-def fetch_model() -> Model:
+def model() -> Model:
     go_model = Sequential()
     go_model.add(Conv2D(32, kernel_size=(2, 2),activation='linear',input_shape=(8,8,1),padding='same'))
     go_model.add(LeakyReLU(alpha=0.1))
@@ -29,5 +29,5 @@ def fetch_model() -> Model:
 
 
 if __name__ == '__main__': 
-    fetch_model()
+    model()
 

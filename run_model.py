@@ -1,18 +1,12 @@
 from array import array
 from utils import prep_training_data
 from utils import prep_board_for_network
-from tensorflow.keras.models import model_from_json
+from utils import load_model
 from tensorflow.keras.models import Model
 import numpy as np
 
 
-def load_model(model_name: str = "test_model") -> Model:
-    model = model_from_json(open(f'./models/{model_name}/model.json').read())
-    model.load_weights(f'./models/{model_name}/model.h5')
-    return model
-
-
-def predict_move(board: array, model: Model) -> tuple[np.ndarray, array]:
+def predict_move(model: Model, board: array) -> tuple[np.ndarray, array]:
     board = prep_board_for_network(board)
     print("\n INPUT")
     print(board * 3)

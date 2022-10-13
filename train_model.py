@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
-from model import fetch_model
 import tensorflow as tf
-import numpy as np
 from utils import prep_training_data
+from model import model as othello_model
 
 
 
@@ -20,7 +19,7 @@ def loss_function(y_true, y_pred):
 def train_model():
     (train_X, train_Y), (test_X, test_Y) = prep_training_data()
 
-    model = fetch_model()
+    model = othello_model()
     model.summary()
     model.compile(
         optimizer='adam',

@@ -8,6 +8,7 @@
 from othello_game_master import score
 from othello_game_master.board import Board
 from othello_game_master.modes import GameModes
+from utils import load_model
 from run_model import predict_move
 import random
 import turtle
@@ -39,7 +40,7 @@ class Othello(Board):
                  inherited from class Board
     '''
 
-    def __init__(self, n = 8, train_mode = 'random_vs_random'):
+    def __init__(self, n = 8, train_mode = 'random_vs_random', model = load_model()):
         '''
             Initilizes the attributes. 
             Only takes one optional parameter; others have default values.
@@ -50,6 +51,8 @@ class Othello(Board):
         self.current_move_index = 0
         self.train_mode = GameModes(train_mode)
         self.epoch = 0
+        self.model = model
+        
 
     def initialize_board(self):
         ''' Method: initialize_board
