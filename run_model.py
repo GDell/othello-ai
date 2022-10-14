@@ -4,10 +4,11 @@ from utils import prep_board_for_network
 from utils import load_model
 from tensorflow.keras.models import Model
 import numpy as np
+import operator
 
 
 def predict_move(model: Model, board: array) -> tuple[np.ndarray, array]:
-    board = prep_board_for_network(board)
+    board = prep_board_for_network(np.asarray(board))
     print("\n INPUT")
     print(board * 3)
     prediction = model.predict(board)
@@ -31,9 +32,8 @@ def process_prediction(prediction: np.ndarray) -> tuple[np.ndarray, array]:
                     'move': (row, column), 
                     'value': rounded_prediction
                 })
-    print("this is the prediction type: ")
-    print(type(prediction))
-    return prediction, sorted(possible_moves, reverse=True,  key=lambda d: d['value'])
+    possible_moves.sort(key=operator.itemgetter('value'), reverse=True)
+    return prediction, possible_moves
 
 
 def test_model():

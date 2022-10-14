@@ -5,6 +5,7 @@
     November 28, 2018
 '''
 
+from shutil import move
 from othello_game_master import score
 from othello_game_master.board import Board
 from othello_game_master.modes import GameModes
@@ -13,6 +14,11 @@ from run_model import predict_move
 import random
 import turtle
 import time
+import json
+from othello_game_master.board import SQUARE, BOARD_COLOR, LINE_COLOR, TILE, TILE_COLORS
+
+
+
 
 # Define all the possible directions in which a player's move can flip 
 # their adversary's tiles as constant (0 – the current row/column, 
@@ -52,6 +58,12 @@ class Othello(Board):
         self.train_mode = GameModes(train_mode)
         self.epoch = 0
         self.model = model
+        self.n = 8
+        self.record = {
+            'snapshots':[],
+            'selected_moves':[],
+            'move_choices':[]
+        }
         
 
     def initialize_board(self):
@@ -75,6 +87,7 @@ class Othello(Board):
             col = initial_squares[i][1]
             self.board[row][col] = color + 1
             self.draw_tile(initial_squares[i], color)
+            
     
     def make_move(self):
         ''' Method: make_move
@@ -221,22 +234,47 @@ class Othello(Board):
         self.play()
         # turtle.onscreenclick(self.play)
         turtle.mainloop()
-        
 
-    def write_trial_file(self, file_name, data):
-        f = open(f"./data/epoch_{self.epoch}/{file_name}_{self.current_move_index}.txt", "w")
-        f.write(data)
-        f.close()
 
+    def get_model_move(self, moves):
+        prediction, predicted_moves = predict_move(self.model, self.board)
+        print("These are the possible moves: ")
+        print(moves)
+        print("These are the possible predicted moves: ")
+        predicted_move_choices = [item['move'] for item in predicted_moves]
+        print(predicted_move_choices)
+        print("Here is the overlap: ")
+        overlap = list(set(moves) & set(predicted_move_choices))
+        print(overlap)
+        return overlap[0]
+
+    def write_training_data(self):
+        for round in range(0, len(self.record['snapshots'])):
+            self.write_trial_file("board", self.record['snapshots'][round], round)
+            self.write_trial_file("selected_move", self.convert_move_to_matrix(self.record['selected_moves'][round]), round)
+            self.write_trial_file("move_choices", str(self.record['move_choices'][round]), round)
 
     def reset_board(self):
-        self.initialize_board()
         self.current_player = 0
         self.num_tiles = [2, 2]
         self.current_move_index = 0
+        self.record = {
+            'snapshots':[],
+            'selected_moves':[],
+            'move_choices':[]
+        }
+        self.board = [[0] * self.n for i in range(self.n)]
+        self.square_size = SQUARE
+        self.board_color = BOARD_COLOR
+        self.line_color = LINE_COLOR
+        self.tile_size = TILE
+        self.tile_colors = TILE_COLORS
+        self.move = ()
+        self.draw_board()
+        self.initialize_board()
         return
 
-    def convert_move_to_matrix(self, move): 
+    def convert_move_to_matrix(self, move):
         rows, cols = (8,8)
         m = [[0 for i in range(cols)] for j in range(rows)]
         m[move[0]][move[1]] = 1 
@@ -274,15 +312,25 @@ class Othello(Board):
             # Make a random move choice
             self.move = random.choice(moves)
             chosen_move = self.move
+
+            # self.move = self.get_model_move(moves)
+            # chosen_move = self.move
+
             print("THIS IS THE SNAPSHOT")
             print(snapshot)
             print("THIS IS THE CHOSEN MOVE")
             print(chosen_move)
 
+            self.record['snapshots'].append(snapshot)
+            self.record['selected_moves'].append(chosen_move)
+            self.record['move_choices'].append(str(moves))
+            # print(json.dumps(self.record, indent=4))
+            # print(time.sleep(3))
+
             # Write to file for training data. 
-            self.write_trial_file("board", snapshot)
-            self.write_trial_file("selected_move", self.convert_move_to_matrix(chosen_move))
-            self.write_trial_file("move_choices", str(moves))
+            # self.write_trial_file("board", snapshot)
+            # self.write_trial_file("selected_move", self.convert_move_to_matrix(chosen_move))
+            # self.write_trial_file("move_choices", str(moves))
             self.current_move_index += 1
 
 
@@ -323,10 +371,12 @@ class Othello(Board):
             turtle.onscreenclick(None)
             print('-----------')
             is_win = self.report_result()
-            # if not is_win:
-            #     self.reset_board()
-            #     self.run()
-            #     return
+
+            if not is_win:
+                self.reset_board()
+                self.run()
+                return
+
             name = input('Enter your name for posterity\n')
             if not score.update_scores(name, self.num_tiles[0]):
                 print('Your score has not been saved.')
@@ -363,21 +413,29 @@ class Othello(Board):
         '''
         win = False
         print('GAME OVER!!')
+
         if self.num_tiles[0] > self.num_tiles[1]:
             print('YOU WIN!!',
                   'You have %d tiles, but the computer only has %d!' 
                   % (self.num_tiles[0], self.num_tiles[1]))
             win = True
+            self.write_training_data()
+            self.write_trial_file("game_result", str(win), self.current_move_index)
         elif self.num_tiles[0] < self.num_tiles[1]:
             print('YOU LOSE...',
                   'The computer has %d tiles, but you only have %d :(' 
                   % (self.num_tiles[1], self.num_tiles[0]))
+
         else:
             print("IT'S A TIE!! There are %d of each!" % self.num_tiles[0])
 
-        self.write_trial_file("game_result", str(win))
-
         return win 
+
+
+    def write_trial_file(self, file_name, data, move_index):
+        f = open(f"./data/epoch_{self.epoch}/{file_name}_{move_index}.txt", "w")
+        f.write(data)
+        f.close()
 
 
     def __str__(self):
@@ -393,6 +451,7 @@ class Othello(Board):
         printable_str = player_str + num_tiles_str + board_str
 
         return printable_str
+
 
     def __eq__(self, other):
         '''
