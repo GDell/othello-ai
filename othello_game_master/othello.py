@@ -55,7 +55,7 @@ class Othello(Board):
         self.num_tiles = [2, 2]
         self.current_move_index = 0
         self.train_mode = GameModes(train_mode)
-        self.epoch = 57
+        self.epoch = 0
         self.model = model
         self.n = 8
         self.record = {
@@ -104,6 +104,7 @@ class Othello(Board):
             self.draw_tile(self.move, self.current_player)
             self.flip_tiles()
     
+
     def flip_tiles(self):
         ''' Method: flip_tiles
             Parameters: self
@@ -129,6 +130,7 @@ class Othello(Board):
                         self.num_tiles[(self.current_player + 1) % 2] -= 1
                         self.draw_tile((row, col), self.current_player)
                         i += 1
+
 
     def has_tile_to_flip(self, move, direction):
         ''' Method: has_tile_to_flip
@@ -159,6 +161,7 @@ class Othello(Board):
                     i += 1
         return i > 1
 
+
     def has_legal_move(self):
         ''' Method: has_legal_move
             Parameters: self
@@ -174,6 +177,7 @@ class Othello(Board):
                     return True
         return False
     
+
     def get_legal_moves(self):
         ''' Method: get_legal_moves
             Parameters: self
@@ -188,6 +192,7 @@ class Othello(Board):
                 if self.is_legal_move(move):
                     moves.append(move)
         return moves
+
 
     def is_legal_move(self, move):
         ''' Method: is_legal_move
@@ -204,6 +209,7 @@ class Othello(Board):
                     return True
         return False
 
+
     def is_valid_coord(self, row, col):
         ''' Method: is_valid_coord
             Parameters: self, row (integer), col (integer)
@@ -214,6 +220,7 @@ class Othello(Board):
         if 0 <= row < self.n and 0 <= col < self.n:
             return True
         return False
+
 
     def run(self):
         
@@ -247,11 +254,13 @@ class Othello(Board):
         print(overlap)
         return overlap[0]
 
+
     def write_training_data(self):
         for round in range(0, len(self.record['snapshots'])):
             self.write_trial_file("board", self.record['snapshots'][round], round)
             self.write_trial_file("selected_move", self.convert_move_to_matrix(self.record['selected_moves'][round]), round)
             self.write_trial_file("move_choices", str(self.record['move_choices'][round]), round)
+
 
     def reset_board(self):
         self.current_player = 0
@@ -267,6 +276,7 @@ class Othello(Board):
         self.draw_board()
         self.initialize_board()
         return
+
 
     def convert_move_to_matrix(self, move):
         rows, cols = (8,8)
@@ -393,6 +403,7 @@ class Othello(Board):
             self.play()
             # turtle.onscreenclick(self.play)
         
+
     def make_random_move(self):
         ''' Method: make_random_move
             Parameters: self
@@ -403,6 +414,7 @@ class Othello(Board):
         if moves:
             self.move = random.choice(moves)
             self.make_move()
+
 
     def report_result(self):
         ''' Method: report_result

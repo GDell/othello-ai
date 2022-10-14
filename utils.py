@@ -17,18 +17,18 @@ def load_train_data(epoch: str) -> \
     board_data = []
     move_data = []
     for i in range(num_test_trials):
-        board_files = [name for name in os.listdir(f'./data/{epoch}/trial_{i+1}/') if "board" in name]
-        move_files = [name for name in os.listdir(f'./data/{epoch}/trial_{i+1}/') if "selected_move" in name]
+        board_files = [name for name in os.listdir(f'./data/{epoch}_{i+1}/') if "board" in name]
+        move_files = [name for name in os.listdir(f'./data/{epoch}_{i+1}/') if "selected_move" in name]
 
         # Load Board Training Data
         for board_file in board_files:
-            with open(f'./data/{epoch}/trial_{i+1}/{board_file}') as f:
+            with open(f'./data/{epoch}_{i+1}/{board_file}') as f:
                 # Load and add the board. 
                 board_data += [[json.loads(line) for line in f.readlines() if "[" in line]]
 
         # Load Labels (Chosen Moves)
         for move_file in move_files:     
-            with open(f'./data/{epoch}/trial_{i+1}/{move_file}') as f: 
+            with open(f'./data/{epoch}_{i+1}/{move_file}') as f: 
                 move_data += [[json.loads(line) for line in f.readlines()]]
     
     # Obtain a test split (train 75% / test 25%)
