@@ -8,6 +8,11 @@ import operator
 
 
 def predict_move(model: Model, board: array) -> tuple[np.ndarray, array]:
+    '''
+        Takes a model and a board as input, and returns a tuple with a prediction of move values 
+        as a 8x8 2D np.ndarray and an array of predicted moves in (row, col) format ranked from 
+        highest to lowest predicted value. 
+    '''
     board = prep_board_for_network(np.asarray(board))
     print("\n INPUT")
     print(board * 3)
@@ -20,6 +25,11 @@ def predict_move(model: Model, board: array) -> tuple[np.ndarray, array]:
 
 
 def process_prediction(prediction: np.ndarray) -> tuple[np.ndarray, array]:
+    '''
+        Takes in a np.ndarray prediction from model.predict(), reshapes the prediction
+        to 8x8 2D np.ndarray and returns a tuple with the reshaped prediction and an array 
+        of possible moves (row, col).
+    '''
     possible_moves = []
     prediction = prediction.reshape(-1,8,8)
     for row in range(0,len(prediction[0])):
@@ -38,7 +48,8 @@ def process_prediction(prediction: np.ndarray) -> tuple[np.ndarray, array]:
 
 def test_model():
     ''' 
-        Takes no input and obtains a move prediction from the most recent model using a random board in the training data set. 
+        Takes no input and obtains a move prediction using the most recent model and a random 
+        board in the training data set. 
     '''
     model = load_model()
     (train_X, train_Y), (test_X, test_Y) = prep_training_data()

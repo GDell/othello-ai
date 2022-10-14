@@ -1,21 +1,25 @@
 from array import array
+import numpy as np
+import json
+import os
 from re import A
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Model
 from tensorflow.keras.models import model_from_json
-import numpy as np
-import json
-import os
+
 
 
 # Load training and testing data.
 def load_train_data(epoch: str) -> \
     tuple[tuple[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]]:
     
+    # Calculate the number of trial epochs to load.
     num_test_trials = len(next(os.walk(f'data/'))[1]) - 2
     
     board_data = []
     move_data = []
+
+    # Load training data from eac epoch.
     for i in range(num_test_trials):
         board_files = [name for name in os.listdir(f'./data/{epoch}_{i+1}/') if "board" in name]
         move_files = [name for name in os.listdir(f'./data/{epoch}_{i+1}/') if "selected_move" in name]
@@ -40,22 +44,19 @@ def load_train_data(epoch: str) -> \
 def prep_training_data(epoch: str ="starting_training_set") -> \
     tuple[tuple[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]]:
     
+    # Load the training data.
     (train_X, train_Y), (test_X, test_Y) = load_train_data(epoch)
-
-    print("HERE IS THE INPUT")
-    print(train_X[0])
-
+    
+    # Reshape and perform type conversion to prep the input data for the network.
     train_X = train_X.reshape(-1, 8, 8)
     test_X = test_X.reshape(-1, 8, 8)
     train_X = train_X.astype('float32')
     test_X = test_X.astype('float32')
 
-    print("HERE IS THE INPUT")
-    print(train_X[0])
-
-    # Normalize to a value between 0.0 and 1.0
+    # Normalize to a value between 0.0 and 1.0 so the network can consume the input.
     train_X, test_X = train_X / 3., test_X / 3.
 
+    # Reshape and perform type conversion to prep the labels for calculating loss.
     train_Y = train_Y.astype('float32')
     test_Y = test_Y.astype('float32')
     train_Y = train_Y.reshape(-1, 64)
