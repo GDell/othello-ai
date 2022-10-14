@@ -6,6 +6,7 @@ class GameModes(Enum):
     RANDOM_VS_RANDOM = "random_vs_random"
     MODEL_VS_MODEL = "model_vs_model"
     PLAYER_VS_MODEL = "player_vs_model"
+    MODEL_VS_RANDOM = "model_vs_random"
 
 
 if __name__ == "__main__":

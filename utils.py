@@ -12,7 +12,7 @@ import os
 def load_train_data(epoch: str) -> \
     tuple[tuple[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]]:
     
-    num_test_trials = len(next(os.walk(f'data/{epoch}'))[1])
+    num_test_trials = len(next(os.walk(f'data/'))[1]) - 2
     
     board_data = []
     move_data = []

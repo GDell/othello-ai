@@ -17,7 +17,7 @@ def loss_function(y_true, y_pred):
 
 
 def train_model():
-    (train_X, train_Y), (test_X, test_Y) = prep_training_data()
+    (train_X, train_Y), (test_X, test_Y) = prep_training_data("epoch")
 
     model = othello_model()
     model.summary()
@@ -27,7 +27,7 @@ def train_model():
         metrics=['accuracy']
     )
 
-    history = model.fit(train_X, train_Y, batch_size=32, epochs=100, verbose=1, validation_data=(test_X, test_Y))
+    history = model.fit(train_X, train_Y, batch_size=32, epochs=1000, verbose=1, validation_data=(test_X, test_Y))
     
     model_json = model.to_json()
     with open("./models/test_model/model.json", "w") as json_file:

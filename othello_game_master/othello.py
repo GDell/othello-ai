@@ -6,6 +6,7 @@
 '''
 
 from shutil import move
+from telnetlib import GA
 from othello_game_master import score
 from othello_game_master.board import Board
 from othello_game_master.modes import GameModes
@@ -45,7 +46,7 @@ class Othello(Board):
                  inherited from class Board
     '''
 
-    def __init__(self, n = 8, train_mode = 'random_vs_random', model = load_model()):
+    def __init__(self, n = 8, game_mode: GameModes = GameModes.RANDOM_VS_RANDOM, model = load_model(), train_session = False):
         '''
             Initilizes the attributes. 
             Only takes one optional parameter; others have default values.
@@ -54,10 +55,11 @@ class Othello(Board):
         self.current_player = 0
         self.num_tiles = [2, 2]
         self.current_move_index = 0
-        self.train_mode = GameModes(train_mode)
+        self.game_mode = game_mode
         self.epoch = 0
         self.model = model
         self.n = 8
+        self.train_session = train_session
         self.record = {
             'snapshots':[],
             'selected_moves':[],
@@ -314,16 +316,21 @@ class Othello(Board):
         if moves:
 
             # Make a random move choice
-            self.move = random.choice(moves)
-            chosen_move = self.move
+            if self.game_mode == GameModes.RANDOM_VS_RANDOM:
+                self.move = random.choice(moves)
+                chosen_move = self.move
 
-            # self.move = self.get_model_move(moves)
-            # chosen_move = self.move
+
+            elif self.game_mode == GameModes.MODEL_VS_RANDOM:
+                self.move = self.get_model_move(moves)
+                chosen_move = self.move
 
             print("THIS IS THE SNAPSHOT")
             print(snapshot)
             print("THIS IS THE CHOSEN MOVE")
             print(chosen_move)
+
+            time.sleep(3)
 
             self.record['snapshots'].append(snapshot)
             self.record['selected_moves'].append(chosen_move)
@@ -331,12 +338,7 @@ class Othello(Board):
             # print(json.dumps(self.record, indent=4))
             # print(time.sleep(3))
 
-            # Write to file for training data. 
-            # self.write_trial_file("board", snapshot)
-            # self.write_trial_file("selected_move", self.convert_move_to_matrix(chosen_move))
-            # self.write_trial_file("move_choices", str(moves))
             self.current_move_index += 1
-
 
             if self.is_legal_move(self.move):
                 turtle.onscreenclick(None)
@@ -376,16 +378,18 @@ class Othello(Board):
             print('-----------')
             is_win = self.report_result()
 
-            if not is_win:
-                self.reset_board()
-                self.run()
-                return
-            
-            self.epoch += 1
-            if self.epoch < 100:
-                self.reset_board()
-                self.run()
-                return
+            if self.train_session:
+                if not is_win:
+                    self.reset_board()
+                    self.run()
+                    return
+                
+                self.epoch += 1
+
+                if self.epoch < 100:
+                    self.reset_board()
+                    self.run()
+                    return
 
             name = input('Enter your name for posterity\n')
             if not score.update_scores(name, self.num_tiles[0]):
@@ -431,8 +435,9 @@ class Othello(Board):
                   'You have %d tiles, but the computer only has %d!' 
                   % (self.num_tiles[0], self.num_tiles[1]))
             win = True
-            self.write_training_data()
-            self.write_trial_file("game_result", str(win), self.current_move_index)
+            if self.train_session:
+                self.write_training_data()
+                self.write_trial_file("game_result", str(win), self.current_move_index)
         elif self.num_tiles[0] < self.num_tiles[1]:
             print('YOU LOSE...',
                   'The computer has %d tiles, but you only have %d :(' 

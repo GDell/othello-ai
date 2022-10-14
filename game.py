@@ -6,10 +6,11 @@
 '''
 
 from othello_game_master import othello
+from othello_game_master.modes import GameModes
 
 def run_game():
     # Initializes the game
-    game = othello.Othello()
+    game = othello.Othello(game_mode = GameModes.MODEL_VS_RANDOM)
     game.draw_board()
     game.initialize_board()
     print(game.__str__())
