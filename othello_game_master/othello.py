@@ -15,7 +15,6 @@ import random
 import turtle
 import time
 import json
-from othello_game_master.board import SQUARE, BOARD_COLOR, LINE_COLOR, TILE, TILE_COLORS
 
 
 
@@ -56,7 +55,7 @@ class Othello(Board):
         self.num_tiles = [2, 2]
         self.current_move_index = 0
         self.train_mode = GameModes(train_mode)
-        self.epoch = 0
+        self.epoch = 57
         self.model = model
         self.n = 8
         self.record = {
@@ -264,11 +263,6 @@ class Othello(Board):
             'move_choices':[]
         }
         self.board = [[0] * self.n for i in range(self.n)]
-        self.square_size = SQUARE
-        self.board_color = BOARD_COLOR
-        self.line_color = LINE_COLOR
-        self.tile_size = TILE
-        self.tile_colors = TILE_COLORS
         self.move = ()
         self.draw_board()
         self.initialize_board()
@@ -373,6 +367,12 @@ class Othello(Board):
             is_win = self.report_result()
 
             if not is_win:
+                self.reset_board()
+                self.run()
+                return
+            
+            self.epoch += 1
+            if self.epoch < 100:
                 self.reset_board()
                 self.run()
                 return
