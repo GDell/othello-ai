@@ -16,8 +16,7 @@ import random
 import turtle
 import time
 import json
-
-
+import operator
 
 
 # Define all the possible directions in which a player's move can flip 
@@ -246,15 +245,33 @@ class Othello(Board):
 
     def get_model_move(self, moves):
         prediction, predicted_moves = predict_move(self.model, self.board)
+
+        predicted_moves_value_dict = {}
+        for move in predicted_moves:
+            predicted_moves_value_dict[move['move']] = move['value']
+
         print("These are the possible moves: ")
         print(moves)
-        print("These are the possible predicted moves: ")
-        predicted_move_choices = [item['move'] for item in predicted_moves]
-        print(predicted_move_choices)
-        print("Here is the overlap: ")
-        overlap = list(set(moves) & set(predicted_move_choices))
-        print(overlap)
-        return overlap[0]
+        possible_moves = []
+        for move in moves:
+            possible_moves.append({
+                'move': move, 'value': predicted_moves_value_dict[move]
+            })
+
+        # print("These are the possible predicted moves: ")
+        # print(predicted_move_choices)
+        # print("Here is the overlap: ")
+        # overlap = list(set(moves) & set(predicted_move_choices))
+
+        print("Possible moves not yet ranked")
+        print(possible_moves)
+
+        possible_moves.sort(key=operator.itemgetter('value'), reverse=True)
+        print("Ranked moves after reverse sorting")
+        print(possible_moves)
+        print("Best possible move: ")
+        print(possible_moves[0])
+        return possible_moves[0]['move']
 
 
     def write_training_data(self):
@@ -330,7 +347,7 @@ class Othello(Board):
             print("THIS IS THE CHOSEN MOVE")
             print(chosen_move)
 
-            time.sleep(3)
+            # time.sleep(3 )
 
             self.record['snapshots'].append(snapshot)
             self.record['selected_moves'].append(chosen_move)

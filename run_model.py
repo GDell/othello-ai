@@ -35,13 +35,13 @@ def process_prediction(prediction: np.ndarray) -> tuple[np.ndarray, array]:
     for row in range(0,len(prediction[0])):
         row_data = np.ndarray.tolist(prediction[0][row])
         for column in range(0, len(row_data)):
-            rounded_prediction = round(row_data[column], 2)
+            rounded_prediction = row_data[column] # round(row_data[column], 3)
             prediction[0][row][column] = rounded_prediction
-            if rounded_prediction > 0.0:
-                possible_moves.append({
-                    'move': (row, column), 
-                    'value': rounded_prediction
-                })
+            # if rounded_prediction > 0.0:
+            possible_moves.append({
+                'move': (row, column), 
+                'value': rounded_prediction
+            })
     possible_moves.sort(key=operator.itemgetter('value'), reverse=True)
     return prediction, possible_moves
 
