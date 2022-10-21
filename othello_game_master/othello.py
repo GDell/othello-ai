@@ -254,27 +254,14 @@ class Othello(Board):
         for move in predicted_moves:
             predicted_moves_value_dict[move['move']] = move['value']
 
-        # print("These are the possible moves: ")
-        # print(moves)
         possible_moves = []
         for move in moves:
             possible_moves.append({
                 'move': move, 'value': predicted_moves_value_dict[move]
             })
 
-        # print("These are the possible predicted moves: ")
-        # print(predicted_move_choices)
-        # print("Here is the overlap: ")
-        # overlap = list(set(moves) & set(predicted_move_choices))
-
-        # print("Possible moves not yet ranked")
-        # print(possible_moves)
-
         possible_moves.sort(key=operator.itemgetter('value'), reverse=True)
-        # print("Ranked moves after reverse sorting")
-        # print(possible_moves)
-        # print("Best possible move: ")
-        # print(possible_moves[0])
+
         return possible_moves[0]['move']
 
 
@@ -340,9 +327,9 @@ class Othello(Board):
         snapshot = self.__str__()
         moves = self.get_legal_moves()
         chosen_move = ""
-        if moves:
 
-            # Make a random move choice
+        # Player 1's turn
+        if moves:
             if self.game_mode == GameModes.RANDOM_VS_RANDOM:
                 self.move = random.choice(moves)
                 chosen_move = self.move
@@ -366,7 +353,7 @@ class Othello(Board):
             self.current_move_index += 1
 
 
-        # Play the computer's turn
+        # Player 2's turn
         while True:
             self.current_player = 1
             if self.has_legal_move():
