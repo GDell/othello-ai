@@ -5,6 +5,7 @@
     November 28, 2018
 '''
 
+import copy
 from shutil import move
 from telnetlib import GA
 from othello_game_master import score
@@ -244,8 +245,8 @@ class Othello(Board):
         turtle.mainloop()
 
 
-    def get_model_move(self, moves):
-        prediction, predicted_moves = predict_move(self.model, self.board)
+    def get_model_move(self, moves, board):
+        prediction, predicted_moves = predict_move(self.model, board)
 
         predicted_moves_value_dict = {}
         for move in predicted_moves:
@@ -345,27 +346,16 @@ class Othello(Board):
                 chosen_move = self.move
 
             elif self.game_mode in [GameModes.MODEL_VS_RANDOM, GameModes.MODEL_VS_MODEL]:
-                self.move = self.get_model_move(moves)
+                self.move = self.get_model_move(moves, self.board)
                 chosen_move = self.move
-
-
-            # print("THIS IS THE SNAPSHOT")
-            # print(snapshot)
-            # print("THIS IS THE CHOSEN MOVE")
-            # print(chosen_move)
-
-            # time.sleep(3 )
 
             self.record['snapshots'].append(snapshot)
             self.record['selected_moves'].append(chosen_move)
             self.record['move_choices'].append(str(moves))
-            # print(json.dumps(self.record, indent=4))
-            # print(time.sleep(3))
 
             self.current_move_index += 1
 
             if self.is_legal_move(self.move):
-                print("MAKING MOVE")
                 # turtle.onscreenclick(None)
                 self.make_move()
             else:
@@ -393,16 +383,29 @@ class Othello(Board):
                     self.make_random_move()
 
                 elif self.game_mode in [GameModes.MODEL_VS_MODEL]:
-                    self.move = self.get_model_move(self.get_legal_moves())
+                    # Reverse state of board to feed to model for computers turn.
+                    other_player_board = copy.deepcopy(self.board)
+                    for row in range(0, len(other_player_board)): 
+                        for column in range(0, len(other_player_board[row])): 
+                            val = other_player_board[row][column]
+                            if val == 1: 
+                                val = 2
+                            elif val == 2: 
+                                val = 1
+                            other_player_board[row][column] = val
+
+                    legal_moves = self.get_legal_moves()
+                    self.move = self.get_model_move(legal_moves, other_player_board)
                     self.make_move()
 
                 self.current_player = 0
                 if self.has_legal_move():  
                     break
             else:
-                    break    
-            
+                break    
         
+        
+    
         # Switch back to the user's turn
         self.current_player = 0
 
@@ -437,7 +440,6 @@ class Othello(Board):
                 turtle.ontimer(turtle.bye, 3000)
         else:
             print('AI\'s turn.')
-            # time.sleep(1)
             self.play()
             # turtle.onscreenclick(self.play)
         

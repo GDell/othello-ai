@@ -6,11 +6,7 @@ from model import model as othello_model
 
 
 def loss_function(y_true, y_pred):
-    # print("This is y_true")
-    # print(y_true)
     # print(tf.print(y_true))
-    # print(f"This is y_pred")
-    # print(y_pred)
     # print(tf.print(y_pred))
     loss = tf.reduce_mean(tf.pow(y_pred - y_true, 2)) # axis=1
     return loss
