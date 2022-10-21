@@ -239,9 +239,11 @@ class Othello(Board):
             return
         
         self.current_player = 0
-        print('AI\s turn.')
-        self.play()
-        # turtle.onscreenclick(self.play)
+        if self.game_mode in [GameModes.PLAYER_VS_MODEL, GameModes.PLAYER_VS_RANDOM]:
+            turtle.onscreenclick(self.play)
+        else:
+            print('AI\'s turn.')
+            self.play()
         turtle.mainloop()
 
 
@@ -315,7 +317,7 @@ class Othello(Board):
         return board_str 
 
 
-    def play(self):  #x, y
+    def play(self, x = None, y = None):  #x, y
         ''' Method: play
             Parameters: self, x (float), y (float)
             Returns: nothing
@@ -349,30 +351,20 @@ class Othello(Board):
                 self.move = self.get_model_move(moves, self.board)
                 chosen_move = self.move
 
+            elif self.game_mode in [GameModes.PLAYER_VS_MODEL]:
+                self.get_coord(x, y)
+                if self.is_legal_move(self.move):
+                    turtle.onscreenclick(None)
+                    self.make_move()
+                else:
+                    return
+
             self.record['snapshots'].append(snapshot)
             self.record['selected_moves'].append(chosen_move)
             self.record['move_choices'].append(str(moves))
 
             self.current_move_index += 1
 
-            if self.is_legal_move(self.move):
-                # turtle.onscreenclick(None)
-                self.make_move()
-            else:
-                print("NOT A LEGAL MOVE")
-                return
-                
-
-        # Play the user's turn
-        # if self.has_legal_move():
-            # self.get_coord(x, y)
-            # self.make_random_move()
-            
-            # if self.is_legal_move(self.move):
-            #     turtle.onscreenclick(None)
-            #     self.make_move()
-            # else:
-            #     return
 
         # Play the computer's turn
         while True:
@@ -382,7 +374,7 @@ class Othello(Board):
                     print('Computer\'s turn.')
                     self.make_random_move()
 
-                elif self.game_mode in [GameModes.MODEL_VS_MODEL]:
+                elif self.game_mode in [GameModes.MODEL_VS_MODEL, GameModes.PLAYER_VS_MODEL]:
                     # Reverse state of board to feed to model for computers turn.
                     other_player_board = copy.deepcopy(self.board)
                     for row in range(0, len(other_player_board)): 
@@ -428,9 +420,9 @@ class Othello(Board):
                     self.run()
                     return
 
-            name = input('Enter your name for posterity\n')
-            if not score.update_scores(name, self.num_tiles[0]):
-                print('Your score has not been saved.')
+            # name = input('Enter your name for posterity\n')
+            # if not score.update_scores(name, self.num_tiles[0]):
+            #     print('Your score has not been saved.')
             print('Thanks for playing Othello!')
             close = input('Close the game screen? Y/N\n')
             if close == 'Y':
@@ -439,10 +431,12 @@ class Othello(Board):
                 print('Quit in 3s...')
                 turtle.ontimer(turtle.bye, 3000)
         else:
-            print('AI\'s turn.')
-            self.play()
-            # turtle.onscreenclick(self.play)
-        
+            if self.game_mode in [GameModes.PLAYER_VS_MODEL, GameModes.PLAYER_VS_RANDOM]:
+                turtle.onscreenclick(self.play)
+            else:
+                print('AI\'s turn.')
+                self.play()
+            
 
     def make_random_move(self):
         ''' Method: make_random_move
