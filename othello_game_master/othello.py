@@ -45,7 +45,7 @@ class Othello(Board):
                  inherited from class Board
     '''
 
-    def __init__(self, n = 8, game_mode: GameModes = GameModes.RANDOM_VS_RANDOM, model = load_model(), train_session = False):
+    def __init__(self, model_gen: int, n = 8, game_mode: GameModes = GameModes.RANDOM_VS_RANDOM, model = load_model(), train_session = False):
         '''
             Initilizes the attributes. 
             Only takes one optional parameter; others have default values.
@@ -58,6 +58,7 @@ class Othello(Board):
         self.epoch = 0
         self.model = model
         self.n = 8
+        self.model_gen = model_gen
         self.train_session = train_session
         self.record = {
             'snapshots':[],
@@ -250,8 +251,8 @@ class Othello(Board):
         for move in predicted_moves:
             predicted_moves_value_dict[move['move']] = move['value']
 
-        print("These are the possible moves: ")
-        print(moves)
+        # print("These are the possible moves: ")
+        # print(moves)
         possible_moves = []
         for move in moves:
             possible_moves.append({
@@ -263,15 +264,21 @@ class Othello(Board):
         # print("Here is the overlap: ")
         # overlap = list(set(moves) & set(predicted_move_choices))
 
-        print("Possible moves not yet ranked")
-        print(possible_moves)
+        # print("Possible moves not yet ranked")
+        # print(possible_moves)
 
         possible_moves.sort(key=operator.itemgetter('value'), reverse=True)
-        print("Ranked moves after reverse sorting")
-        print(possible_moves)
-        print("Best possible move: ")
-        print(possible_moves[0])
+        # print("Ranked moves after reverse sorting")
+        # print(possible_moves)
+        # print("Best possible move: ")
+        # print(possible_moves[0])
         return possible_moves[0]['move']
+
+
+    def write_trial_file(self, file_name, data, move_index):
+        f = open(f"./data/model_gen_{self.model_gen}/epoch_{self.epoch}/{file_name}_{move_index}.txt", "w")
+        f.write(data)
+        f.close()
 
 
     def write_training_data(self):
@@ -337,15 +344,15 @@ class Othello(Board):
                 self.move = random.choice(moves)
                 chosen_move = self.move
 
-
-            elif self.game_mode == GameModes.MODEL_VS_RANDOM:
+            elif self.game_mode in [GameModes.MODEL_VS_RANDOM, GameModes.MODEL_VS_MODEL]:
                 self.move = self.get_model_move(moves)
                 chosen_move = self.move
 
-            print("THIS IS THE SNAPSHOT")
-            print(snapshot)
-            print("THIS IS THE CHOSEN MOVE")
-            print(chosen_move)
+
+            # print("THIS IS THE SNAPSHOT")
+            # print(snapshot)
+            # print("THIS IS THE CHOSEN MOVE")
+            # print(chosen_move)
 
             # time.sleep(3 )
 
@@ -358,10 +365,13 @@ class Othello(Board):
             self.current_move_index += 1
 
             if self.is_legal_move(self.move):
-                turtle.onscreenclick(None)
+                print("MAKING MOVE")
+                # turtle.onscreenclick(None)
                 self.make_move()
             else:
+                print("NOT A LEGAL MOVE")
                 return
+                
 
         # Play the user's turn
         # if self.has_legal_move():
@@ -378,13 +388,20 @@ class Othello(Board):
         while True:
             self.current_player = 1
             if self.has_legal_move():
-                print('Computer\'s turn.')
-                self.make_random_move()
+                if self.game_mode in [GameModes.RANDOM_VS_RANDOM, GameModes.MODEL_VS_RANDOM]:
+                    print('Computer\'s turn.')
+                    self.make_random_move()
+
+                elif self.game_mode in [GameModes.MODEL_VS_MODEL]:
+                    self.move = self.get_model_move(self.get_legal_moves())
+                    self.make_move()
+
                 self.current_player = 0
                 if self.has_legal_move():  
                     break
             else:
-                break
+                    break    
+            
         
         # Switch back to the user's turn
         self.current_player = 0
@@ -464,12 +481,6 @@ class Othello(Board):
             print("IT'S A TIE!! There are %d of each!" % self.num_tiles[0])
 
         return win 
-
-
-    def write_trial_file(self, file_name, data, move_index):
-        f = open(f"./data/epoch_{self.epoch}/{file_name}_{move_index}.txt", "w")
-        f.write(data)
-        f.close()
 
 
     def __str__(self):

@@ -1,6 +1,5 @@
-build: 
-	pip install -r requirements.py
-
+make save_env: 
+	conda env export | grep -v "^prefix: " > environment.yml
 
 game:
 	python game.py
@@ -16,5 +15,4 @@ train:
 
 run_model: 
 	python run_model.py
-
 

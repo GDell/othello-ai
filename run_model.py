@@ -14,13 +14,13 @@ def predict_move(model: Model, board: array) -> tuple[np.ndarray, array]:
         highest to lowest predicted value. 
     '''
     board = prep_board_for_network(np.asarray(board))
-    print("\n INPUT")
-    print(board * 3)
+    # print("\n INPUT")
+    # print(board * 3)
     prediction = model.predict(board)
     prediction, predicted_moves = process_prediction(prediction)
-    print("\n PREDICTION")
-    print(prediction)
-    print(predicted_moves)
+    # print("\n PREDICTION")
+    # print(prediction)
+    # print(predicted_moves)
     return prediction, predicted_moves
 
 
