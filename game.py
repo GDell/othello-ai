@@ -11,7 +11,7 @@ from othello_game_master.modes import GameModes
 def run_game():
     # Initializes the game
     # game = othello.Othello(game_mode = GameModes.MODEL_VS_MODEL, model_gen = 1, train_session = True)
-    game = othello.Othello(game_mode = GameModes.PLAYER_VS_MODEL, model_gen = 1, train_session = False)
+    game = othello.Othello(game_mode = GameModes.MODEL_VS_MODEL, model_gen = 1, train_session = True)
 
     game.draw_board()
     game.initialize_board()

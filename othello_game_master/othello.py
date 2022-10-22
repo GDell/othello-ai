@@ -58,7 +58,7 @@ class Othello(Board):
         self.game_mode = game_mode
         self.epoch = 0
         self.model = model
-        self.n = 8
+        self.n = n
         self.model_gen = model_gen
         self.train_session = train_session
         self.record = {
@@ -247,7 +247,7 @@ class Othello(Board):
         turtle.mainloop()
 
 
-    def get_model_move(self, moves, board):
+    def get_model_move(self, moves, board, variation_flag = False):
         prediction, predicted_moves = predict_move(self.model, board)
 
         predicted_moves_value_dict = {}
@@ -262,7 +262,13 @@ class Othello(Board):
 
         possible_moves.sort(key=operator.itemgetter('value'), reverse=True)
 
-        return possible_moves[0]['move']
+        num_moves = len(possible_moves)
+        move_index = 0
+        if variation_flag: 
+            rank_choice_range = range(3) if num_moves >= 3 else range(num_moves)
+            move_index = random.choice(rank_choice_range)
+        
+        return possible_moves[move_index]['move']
 
 
     def write_trial_file(self, file_name, data, move_index):
@@ -335,8 +341,9 @@ class Othello(Board):
                 chosen_move = self.move
 
             elif self.game_mode in [GameModes.MODEL_VS_RANDOM, GameModes.MODEL_VS_MODEL]:
-                self.move = self.get_model_move(moves, self.board)
+                self.move = self.get_model_move(moves, self.board, variation_flag=True)
                 chosen_move = self.move
+                self.make_move()
 
             elif self.game_mode in [GameModes.PLAYER_VS_MODEL]:
                 self.get_coord(x, y)
@@ -358,24 +365,24 @@ class Othello(Board):
             self.current_player = 1
             if self.has_legal_move():
                 if self.game_mode in [GameModes.RANDOM_VS_RANDOM, GameModes.MODEL_VS_RANDOM]:
-                    print('Computer\'s turn.')
                     self.make_random_move()
 
                 elif self.game_mode in [GameModes.MODEL_VS_MODEL, GameModes.PLAYER_VS_MODEL]:
                     # Reverse state of board to feed to model for computers turn.
-                    other_player_board = copy.deepcopy(self.board)
-                    for row in range(0, len(other_player_board)): 
-                        for column in range(0, len(other_player_board[row])): 
-                            val = other_player_board[row][column]
+                    player_two_board = copy.deepcopy(self.board)
+                    for row in range(0, len(player_two_board)): 
+                        for column in range(0, len(player_two_board[row])): 
+                            val = player_two_board[row][column]
                             if val == 1: 
                                 val = 2
                             elif val == 2: 
                                 val = 1
-                            other_player_board[row][column] = val
+                            player_two_board[row][column] = val
 
                     legal_moves = self.get_legal_moves()
-                    self.move = self.get_model_move(legal_moves, other_player_board)
+                    self.move = self.get_model_move(legal_moves, player_two_board, variation_flag=False)
                     self.make_move()
+
 
                 self.current_player = 0
                 if self.has_legal_move():  
@@ -421,7 +428,6 @@ class Othello(Board):
             if self.game_mode in [GameModes.PLAYER_VS_MODEL, GameModes.PLAYER_VS_RANDOM]:
                 turtle.onscreenclick(self.play)
             else:
-                print('AI\'s turn.')
                 self.play()
             
 
