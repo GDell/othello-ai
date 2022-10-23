@@ -46,7 +46,13 @@ class Othello(Board):
                  inherited from class Board
     '''
 
-    def __init__(self, model_gen: int, n = 8, game_mode: GameModes = GameModes.RANDOM_VS_RANDOM, model = load_model(), train_session = False):
+    def __init__(self, \
+                model_gen: int, \
+                n: int = 8, \
+                game_mode: GameModes = GameModes.RANDOM_VS_RANDOM, \
+                model = load_model(), \
+                train_session: bool = False, 
+                draw: bool = True):
         '''
             Initilizes the attributes. 
             Only takes one optional parameter; others have default values.
@@ -56,11 +62,12 @@ class Othello(Board):
         self.num_tiles = [2, 2]
         self.current_move_index = 0
         self.game_mode = game_mode
-        self.epoch = 0
+        self.epoch = 14
         self.model = model
         self.n = n
         self.model_gen = model_gen
         self.train_session = train_session
+        self.draw = draw
         self.record = {
             'snapshots':[],
             'selected_moves':[],
@@ -310,7 +317,7 @@ class Othello(Board):
         return board_str 
 
 
-    def play(self, x = None, y = None):  #x, y
+    def play(self, x = None, y = None):
         ''' Method: play
             Parameters: self, x (float), y (float)
             Returns: nothing
@@ -397,7 +404,9 @@ class Othello(Board):
 
         # Check whether the game is over
         if not self.has_legal_move() or sum(self.num_tiles) == self.n ** 2:
+
             turtle.onscreenclick(None)
+            
             print('-----------')
             is_win = self.report_result()
 

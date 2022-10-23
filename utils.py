@@ -41,7 +41,7 @@ def load_train_data(model_gen: str) -> \
     return (np.array(train_x), np.array(train_y)), (np.array(test_x), np.array(test_y))
 
 
-def prep_training_data(model_name: str ="starting_training_set") -> \
+def prep_training_data(model_name: str ="test_training_set") -> \
     tuple[tuple[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]]:
     
     # Load the training data.
