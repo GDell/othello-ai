@@ -8,12 +8,15 @@
 from othello_game_master import othello
 from othello_game_master.modes import GameModes
 
-def run_game():
+def run_game(draw_board = True):
     # Initializes the game
     # game = othello.Othello(game_mode = GameModes.MODEL_VS_MODEL, model_gen = 1, train_session = True)
-    game = othello.Othello(game_mode = GameModes.MODEL_VS_MODEL, model_gen = 1, train_session = True)
 
-    game.draw_board()
+    game = othello.Othello(game_mode = GameModes.MODEL_VS_MODEL, model_gen = 1, train_session = True, draw = draw_board)
+
+    if draw_board:
+        game.draw_board()
+        
     game.initialize_board()
     print(game.__str__())
 
@@ -26,5 +29,5 @@ def run_game():
 
 
 if __name__ == "__main__":
-    run_game()
+    run_game(draw_board=False)
     

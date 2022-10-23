@@ -62,7 +62,7 @@ class Othello(Board):
         self.num_tiles = [2, 2]
         self.current_move_index = 0
         self.game_mode = game_mode
-        self.epoch = 55
+        self.epoch = 87
         self.model = model
         self.n = n
         self.model_gen = model_gen
@@ -95,7 +95,8 @@ class Othello(Board):
             row = initial_squares[i][0]
             col = initial_squares[i][1]
             self.board[row][col] = color + 1
-            self.draw_tile(initial_squares[i], color)
+            if self.draw:
+                self.draw_tile(initial_squares[i], color)
             
     
     def make_move(self):
@@ -111,7 +112,8 @@ class Othello(Board):
         if self.is_legal_move(self.move):
             self.board[self.move[0]][self.move[1]] = self.current_player + 1
             self.num_tiles[self.current_player] += 1
-            self.draw_tile(self.move, self.current_player)
+            if self.draw:
+                self.draw_tile(self.move, self.current_player)
             self.flip_tiles()
     
 
@@ -138,7 +140,8 @@ class Othello(Board):
                         self.board[row][col] = curr_tile
                         self.num_tiles[self.current_player] += 1
                         self.num_tiles[(self.current_player + 1) % 2] -= 1
-                        self.draw_tile((row, col), self.current_player)
+                        if self.draw:
+                            self.draw_tile((row, col), self.current_player)
                         i += 1
 
 
@@ -251,7 +254,9 @@ class Othello(Board):
         else:
             print('AI\'s turn.')
             self.play()
-        turtle.mainloop()
+
+        if self.draw:
+            turtle.mainloop()
 
 
     def get_model_move(self, moves, board, variation_flag = False):
@@ -302,8 +307,9 @@ class Othello(Board):
         }
         self.board = [[0] * self.n for i in range(self.n)]
         self.move = ()
-        self.draw_board()
         self.initialize_board()
+        if self.draw:
+            self.draw_board()
         return
 
 
@@ -405,7 +411,8 @@ class Othello(Board):
         # Check whether the game is over
         if not self.has_legal_move() or sum(self.num_tiles) == self.n ** 2:
 
-            turtle.onscreenclick(None)
+            if self.draw:
+                turtle.onscreenclick(None)
             
             print('-----------')
             is_win = self.report_result()
@@ -427,12 +434,13 @@ class Othello(Board):
             # if not score.update_scores(name, self.num_tiles[0]):
             #     print('Your score has not been saved.')
             print('Thanks for playing Othello!')
-            close = input('Close the game screen? Y/N\n')
-            if close == 'Y':
-                turtle.bye()
-            elif close != 'N':
-                print('Quit in 3s...')
-                turtle.ontimer(turtle.bye, 3000)
+            if self.draw:
+                close = input('Close the game screen? Y/N\n')
+                if close == 'Y':
+                    turtle.bye()
+                elif close != 'N':
+                    print('Quit in 3s...')
+                    turtle.ontimer(turtle.bye, 3000)
         else:
             if self.game_mode in [GameModes.PLAYER_VS_MODEL, GameModes.PLAYER_VS_RANDOM]:
                 turtle.onscreenclick(self.play)
