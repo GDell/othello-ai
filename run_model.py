@@ -32,9 +32,9 @@ def process_prediction(prediction: np.ndarray) -> tuple[np.ndarray, array]:
     '''
     possible_moves = []
     prediction = prediction.reshape(-1,8,8)
-    for row in range(0,len(prediction[0])):
+    for row in range(len(prediction[0])):
         row_data = np.ndarray.tolist(prediction[0][row])
-        for column in range(0, len(row_data)):
+        for column in range(len(row_data)):
             prediction[0][row][column] = row_data[column]
             possible_moves.append({
                 'move': (row, column), 

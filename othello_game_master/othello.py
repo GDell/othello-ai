@@ -62,7 +62,7 @@ class Othello(Board):
         self.num_tiles = [2, 2]
         self.current_move_index = 0
         self.game_mode = game_mode
-        self.epoch = 14
+        self.epoch = 27
         self.model = model
         self.n = n
         self.model_gen = model_gen
