@@ -4,15 +4,10 @@ conda -- <https://conda.io/projects/conda/en/latest/user-guide/getting-started.h
 
 ## Start:
 
-'conda activate othello-ai'
+'conda activate <env>'
 'make run'
 
-Install packages 
-
-'conda install <x>'
-
-
-## Input: 
+## Model Input: 
 
 1. 8x8 matrix - Current board state (64 total vectors)
 2. Possible moves? 
@@ -21,7 +16,7 @@ Install packages
 Values - 0, 1, 2 
 
 
-## Output:
+## Model Output:
 
 Array of 64 float values, converted to 8x8 matrix.
 
