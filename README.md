@@ -2,11 +2,6 @@
 
 conda -- <https://conda.io/projects/conda/en/latest/user-guide/getting-started.html>
 
-## Start:
-
-'conda activate <env>'
-'make run'
-
 ## Model Input: 
 
 1. 8x8 matrix - Current board state (64 total vectors)
